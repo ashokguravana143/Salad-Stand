@@ -1,0 +1,53 @@
+import { CommonModule, DatePipe } from '@angular/common';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+
+import { AppDataService } from '../../core/services/app-data.service';
+import { Order } from '../../core/models/app.models';
+
+@Component({
+  selector: 'app-my-deliveries',
+  standalone: true,
+  imports: [CommonModule, RouterLink, DatePipe],
+  template: `
+    <h1 class="display-6 fw-bold text-success text-center mb-4">My Deliveries</h1>
+    <div *ngIf="!orders().length" class="card card-soft text-center p-5">
+      <h2 class="h4">You have no active deliveries.</h2>
+      <a routerLink="/delivery/dashboard" class="btn btn-success btn-pill mt-3">View Pending Orders</a>
+    </div>
+    <div class="d-grid gap-3" *ngIf="orders().length">
+      <div class="card card-soft" *ngFor="let order of orders()">
+        <div class="card-body d-flex flex-column flex-md-row justify-content-between gap-3">
+          <div>
+            <h2 class="h4">Order #{{ order.id }}</h2>
+            <p class="mb-1"><strong>Customer Name:</strong> {{ order.customer.full_name }}</p>
+            <p class="mb-1"><strong>Phone:</strong> {{ order.customer.phone_number }}</p>
+            <p class="mb-1"><strong>Address:</strong> {{ order.delivery_address }}</p>
+            <p class="mb-1"><strong>Mode of Payment:</strong> {{ order.payment_method === 'ONLINE' ? 'Online' : 'Cash on Delivery' }}</p>
+            <p class="mb-0"><strong>Status:</strong> {{ order.status }}</p>
+          </div>
+          <div class="d-flex align-items-center">
+            <button *ngIf="order.status === 'PICKED_UP'" class="btn btn-success btn-pill" (click)="deliver(order.id)">Mark as Delivered</button>
+            <span *ngIf="order.status === 'DELIVERED'" class="badge text-bg-secondary">Completed</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `
+})
+export class MyDeliveriesComponent implements OnInit {
+  private readonly api = inject(AppDataService);
+  readonly orders = signal<Order[]>([]);
+
+  ngOnInit(): void {
+    this.load();
+  }
+
+  load() {
+    this.api.myDeliveries().subscribe((rows) => this.orders.set(rows));
+  }
+
+  deliver(orderId: number) {
+    this.api.deliver(orderId).subscribe(() => this.load());
+  }
+}

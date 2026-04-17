@@ -1,0 +1,39 @@
+:root {
+  --ss-green: #198754;
+  --ss-lime: #84cc16;
+  --ss-cream: #f7fdee;
+  --ss-dark: #143d2d;
+}
+
+body {
+  background: radial-gradient(circle at top right, rgba(132, 204, 22, 0.18), transparent 24%),
+    linear-gradient(180deg, #f8fff1 0%, var(--ss-cream) 100%);
+  color: #24312b;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.page-shell {
+  min-height: calc(100vh - 140px);
+}
+
+.card-soft {
+  border: 0;
+  border-radius: 1.5rem;
+  box-shadow: 0 1rem 2.5rem rgba(23, 43, 31, 0.08);
+}
+
+.btn-pill {
+  border-radius: 999px;
+  padding-inline: 1.25rem;
+}
+
+.hero-panel {
+  background: linear-gradient(135deg, rgba(25, 135, 84, 0.92), rgba(132, 204, 22, 0.82));
+  border-radius: 2rem;
+  color: white;
+}
+
+.price-tag {
+  color: var(--ss-green);
+  font-weight: 700;
+}
