@@ -25,7 +25,7 @@ CREATE TABLE menu_items (
     description TEXT,
     price NUMERIC(10, 2) NOT NULL,
     available BOOLEAN NOT NULL DEFAULT TRUE,
-    image_url VARCHAR(1000)
+    image_path VARCHAR(1000)
 );
 
 CREATE TABLE system_config (

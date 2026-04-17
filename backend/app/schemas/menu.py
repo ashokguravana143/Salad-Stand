@@ -8,7 +8,7 @@ class MenuBase(BaseModel):
     description: str | None = Field(default=None, max_length=1000)
     price: Decimal = Field(gt=0)
     available: bool = True
-    image_url: str | None = Field(default=None, max_length=1000)
+    image_path: str | None = Field(default=None, max_length=1000)
 
 
 class MenuCreate(MenuBase):

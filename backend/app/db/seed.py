@@ -14,7 +14,6 @@ def seed_initial_data() -> None:
         _seed_roles(db)
         _seed_admins(db)
         _seed_system_config(db)
-        _seed_menu(db)
         db.commit()
 
 
@@ -56,31 +55,4 @@ def _seed_system_config(db: Session) -> None:
         db.add(SystemConfig(config_key="isCodAvailable", config_value="true"))
 
 
-def _seed_menu(db: Session) -> None:
-    if db.query(Menu).count() > 0:
-        return
-    db.add_all(
-        [
-            Menu(
-                name="Tropical Bliss",
-                description="Fresh pineapple, mango, kiwi, and mint.",
-                price=189.00,
-                available=True,
-                image_url="https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=900&q=80",
-            ),
-            Menu(
-                name="Berry Crunch",
-                description="Strawberries, blueberries, apple, chia, and honey drizzle.",
-                price=209.00,
-                available=True,
-                image_url="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80",
-            ),
-            Menu(
-                name="Citrus Glow",
-                description="Orange, sweet lime, pomegranate, and watermelon.",
-                price=179.00,
-                available=True,
-                image_url="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=80",
-            ),
-        ]
-    )
+

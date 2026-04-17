@@ -3,6 +3,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { environment } from '../../../environments/environment';
 import { AppDataService } from '../../core/services/app-data.service';
 import { MenuItem } from '../../core/models/app.models';
 
@@ -20,11 +21,19 @@ import { MenuItem } from '../../core/models/app.models';
               <div><label class="form-label">Name</label><input class="form-control" formControlName="name" /></div>
               <div><label class="form-label">Description</label><textarea class="form-control" rows="4" formControlName="description"></textarea></div>
               <div><label class="form-label">Price</label><input class="form-control" type="number" step="0.01" formControlName="price" /></div>
-              <div><label class="form-label">Image URL</label><input class="form-control" formControlName="image_url" /></div>
+              <div>
+                <label class="form-label">Upload Image</label>
+                <input class="form-control" type="file" accept="image/*" (change)="onFileSelected($event)" />
+                <small class="text-muted">Supported formats: JPEG, PNG, GIF, WebP.</small>
+              </div>
+              <div *ngIf="currentImage" class="mb-3">
+                <div class="text-muted mb-2">Preview</div>
+                <img [src]="currentImage" alt="Salad preview" class="img-fluid rounded" style="max-height: 220px; object-fit: cover;" />
+              </div>
               <div class="form-check"><input class="form-check-input" type="checkbox" formControlName="available" id="available" /><label class="form-check-label" for="available">Mark as Available for Customers</label></div>
               <div class="d-flex justify-content-between">
                 <button type="button" class="btn btn-outline-secondary btn-pill" (click)="router.navigateByUrl('/admin/menu')">Cancel</button>
-                <button class="btn btn-success btn-pill">{{ menuId ? 'Save Salad' : 'Create Salad' }}</button>
+                <button class="btn btn-success btn-pill" [disabled]="loading">{{ loading ? 'Saving...' : (menuId ? 'Save Salad' : 'Create Salad') }}</button>
               </div>
             </form>
           </div>
@@ -40,12 +49,14 @@ export class SaladFormComponent implements OnInit {
   readonly router = inject(Router);
 
   menuId = Number(this.route.snapshot.paramMap.get('id') ?? 0) || null;
+  selectedFile: File | null = null;
+  currentImage: string | null = null;
+  loading = false;
 
   readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required]],
     description: [''],
     price: [0, [Validators.required]],
-    image_url: [''],
     available: [true]
   });
 
@@ -54,9 +65,9 @@ export class SaladFormComponent implements OnInit {
     if (state) {
       this.form.patchValue({
         ...state,
-        description: state.description ?? '',
-        image_url: state.image_url ?? ''
+        description: state.description ?? ''
       });
+      this.currentImage = state.image_url ? `${environment.apiBaseUrl}${state.image_url}` : null;
       return;
     }
     if (this.menuId) {
@@ -65,17 +76,53 @@ export class SaladFormComponent implements OnInit {
         if (salad) {
           this.form.patchValue({
             ...salad,
-            description: salad.description ?? '',
-            image_url: salad.image_url ?? ''
+            description: salad.description ?? ''
           });
+          this.currentImage = salad.image_url ? `${environment.apiBaseUrl}${salad.image_url}` : null;
         }
       });
     }
   }
 
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) {
+      return;
+    }
+
+    this.selectedFile = input.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.currentImage = e.target?.result as string;
+    };
+    reader.readAsDataURL(this.selectedFile);
+  }
+
   submit() {
-    const payload = this.form.getRawValue();
-    const request = this.menuId ? this.api.updateMenu(this.menuId, payload) : this.api.createMenu(payload);
-    request.subscribe(() => this.router.navigateByUrl('/admin/menu'));
+    if (this.form.invalid) {
+      return;
+    }
+
+    const formData = new FormData();
+    const values = this.form.getRawValue();
+
+    formData.append('name', values.name);
+    formData.append('description', values.description || '');
+    formData.append('price', values.price.toString());
+    formData.append('available', values.available.toString());
+
+    if (this.selectedFile) {
+      formData.append('image', this.selectedFile);
+    }
+
+    this.loading = true;
+    const request = this.menuId
+      ? this.api.updateMenu(this.menuId, formData)
+      : this.api.createMenu(formData);
+
+    request.subscribe({
+      next: () => this.router.navigateByUrl('/admin/menu'),
+      error: () => (this.loading = false),
+    });
   }
 }

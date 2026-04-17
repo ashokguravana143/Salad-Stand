@@ -47,11 +47,11 @@ export class AppDataService {
     return this.api.post<Order>(`/admin/orders/${orderId}/ready`, {});
   }
 
-  createMenu(payload: Partial<MenuItem>) {
+  createMenu(payload: FormData) {
     return this.api.post<MenuItem>('/menu', payload);
   }
 
-  updateMenu(menuId: number, payload: Partial<MenuItem>) {
+  updateMenu(menuId: number, payload: FormData) {
     return this.api.put<MenuItem>(`/menu/${menuId}`, payload);
   }
 

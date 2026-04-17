@@ -1,6 +1,4 @@
-from typing import Annotated
-
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, File, Form, UploadFile, status
 
 from app.api.deps import DBSession, require_roles
 from app.models import RoleName
@@ -26,21 +24,31 @@ def list_admin_menu(
 
 @router.post("", response_model=MenuResponse, status_code=status.HTTP_201_CREATED)
 def create_menu_item(
-    payload: MenuCreate,
     db: DBSession,
+    name: str = Form(...),
+    description: str | None = Form(None),
+    price: float = Form(...),
+    available: bool = Form(True),
+    image: UploadFile | None = File(None),
     _=Depends(require_roles(RoleName.ROLE_ADMIN)),
 ):
-    return MenuService(db).create_menu_item(payload)
+    payload = MenuCreate(name=name, description=description, price=price, available=available)
+    return MenuService(db).create_menu_item(payload, image)
 
 
 @router.put("/{menu_id}", response_model=MenuResponse)
 def update_menu_item(
     menu_id: int,
-    payload: MenuUpdate,
     db: DBSession,
+    name: str = Form(...),
+    description: str | None = Form(None),
+    price: float = Form(...),
+    available: bool = Form(True),
+    image: UploadFile | None = File(None),
     _=Depends(require_roles(RoleName.ROLE_ADMIN)),
 ):
-    return MenuService(db).update_menu_item(menu_id, payload)
+    payload = MenuUpdate(name=name, description=description, price=price, available=available)
+    return MenuService(db).update_menu_item(menu_id, payload, image)
 
 
 @router.post("/{menu_id}/toggle", response_model=MenuResponse)

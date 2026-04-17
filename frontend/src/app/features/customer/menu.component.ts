@@ -1,6 +1,7 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 
+import { environment } from '../../../environments/environment';
 import { AppDataService } from '../../core/services/app-data.service';
 import { CartService } from '../../core/services/cart.service';
 import { MenuItem } from '../../core/models/app.models';
@@ -18,7 +19,7 @@ import { MenuItem } from '../../core/models/app.models';
     <div class="row g-4" *ngIf="salads().length; else empty">
       <div class="col-md-6 col-lg-4" *ngFor="let salad of salads()">
         <div class="card card-soft h-100 overflow-hidden">
-          <img [src]="salad.image_url || placeholder" class="card-img-top" style="height: 220px; object-fit: cover" [alt]="salad.name" />
+          <img [src]="salad.image_path ? apiUrl + salad.image_path : placeholder" class="card-img-top" style="height: 220px; object-fit: cover" [alt]="salad.name" />
           <div class="card-body d-flex flex-column">
             <h2 class="h4 text-success">{{ salad.name }}</h2>
             <p class="text-secondary flex-grow-1">{{ salad.description }}</p>
@@ -44,6 +45,8 @@ export class MenuComponent implements OnInit {
   readonly salads = signal<MenuItem[]>([]);
   readonly message = signal('');
   readonly placeholder = 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=900&q=80';
+  readonly apiBaseUrl = environment.apiBaseUrl;
+  readonly apiUrl = environment.apiurl;;
 
   ngOnInit(): void {
     this.api.menu().subscribe((rows) => this.salads.set(rows));

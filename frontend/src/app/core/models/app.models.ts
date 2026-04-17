@@ -18,6 +18,7 @@ export interface AuthResponse {
 }
 
 export interface MenuItem {
+image_path: any;
   id: number;
   name: string;
   description?: string | null;
