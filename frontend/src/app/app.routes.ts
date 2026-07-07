@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { authGuard } from './core/guards/auth.guard';
+import { orderingGuard } from './core/guards/ordering.guard';
 import { roleGuard } from './core/guards/role.guard';
 import { DashboardComponent as AdminDashboardComponent } from './features/admin/dashboard.component';
 import { DeliveryFormComponent } from './features/admin/delivery-form.component';
@@ -33,7 +34,7 @@ export const routes: Routes = [
       { path: 'register', component: RegisterComponent },
       { path: 'menu', component: MenuComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ROLE_CUSTOMER'] } },
       { path: 'cart', component: CartComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ROLE_CUSTOMER'] } },
-      { path: 'checkout', component: CheckoutComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ROLE_CUSTOMER'] } },
+      { path: 'checkout', component: CheckoutComponent, canActivate: [authGuard, roleGuard, orderingGuard], data: { roles: ['ROLE_CUSTOMER'] } },
       { path: 'order-success', component: OrderSuccessComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ROLE_CUSTOMER'] } },
       { path: 'orders/my', component: MyOrdersComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ROLE_CUSTOMER'] } },
       { path: 'admin/dashboard', component: AdminDashboardComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ROLE_ADMIN'] } },

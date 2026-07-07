@@ -71,6 +71,34 @@ export interface AppSettings {
   razorpay_key_id?: string | null;
 }
 
+export type LocationPermissionState = 'idle' | 'loading' | 'granted' | 'denied' | 'unsupported';
+export type AddressLabel = 'HOME' | 'WORK' | 'OTHER';
+
+export interface ServiceAvailability {
+  available: boolean;
+  distance_km: number;
+  radius_km: number;
+  delivery_fee: number;
+  estimated_delivery_time_minutes: number;
+  message: string;
+}
+
+export interface AddressRecord {
+  id: number;
+  label: AddressLabel;
+  formatted_address: string;
+  door_flat_no: string;
+  street_name: string;
+  landmark?: string | null;
+  city: string;
+  pincode: string;
+  latitude: number;
+  longitude: number;
+  is_default: boolean;
+  distance_km?: number | null;
+  is_serviceable?: boolean | null;
+}
+
 export interface DeliveryEarning {
   order_id: number;
   delivery_address: string;

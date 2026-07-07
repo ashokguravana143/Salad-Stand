@@ -11,17 +11,26 @@ class CartOrderItemInput(BaseModel):
 
 class OrderCreateRequest(BaseModel):
     delivery_address: str = Field(min_length=5, max_length=500)
+    address_id: int | None = None
+    latitude: float
+    longitude: float
     payment_method: str
     items: list[CartOrderItemInput]
 
 
 class PaymentCreateRequest(BaseModel):
     delivery_address: str = Field(min_length=5, max_length=500)
+    address_id: int | None = None
+    latitude: float
+    longitude: float
     items: list[CartOrderItemInput]
 
 
 class PaymentVerifyRequest(BaseModel):
     delivery_address: str = Field(min_length=5, max_length=500)
+    address_id: int | None = None
+    latitude: float
+    longitude: float
     razorpay_order_id: str
     razorpay_payment_id: str
     razorpay_signature: str

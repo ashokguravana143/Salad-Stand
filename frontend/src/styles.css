@@ -3,6 +3,9 @@
   --ss-lime: #84cc16;
   --ss-cream: #f7fdee;
   --ss-dark: #143d2d;
+  --ss-mint: #edf7ef;
+  --ss-warm: #fff8eb;
+  --ss-shadow: 0 1rem 2.5rem rgba(23, 43, 31, 0.08);
 }
 
 body {
@@ -19,7 +22,7 @@ body {
 .card-soft {
   border: 0;
   border-radius: 1.5rem;
-  box-shadow: 0 1rem 2.5rem rgba(23, 43, 31, 0.08);
+  box-shadow: var(--ss-shadow);
 }
 
 .btn-pill {
@@ -36,4 +39,158 @@ body {
 .price-tag {
   color: var(--ss-green);
   font-weight: 700;
+}
+
+.eyebrow {
+  color: #628b4b;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.location-banner,
+.service-status-card,
+.delivery-alert,
+.selected-address-card,
+.checkout-status,
+.saved-address-card,
+.autocomplete-panel {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+}
+
+.location-banner {
+  border: 1px solid rgba(25, 135, 84, 0.12);
+}
+
+.service-status-card {
+  border: 1px solid rgba(132, 204, 22, 0.2);
+}
+
+.delivery-alert {
+  border: 0;
+  border-radius: 1rem;
+}
+
+.checkout-status {
+  border: 1px solid rgba(25, 135, 84, 0.14);
+  border-radius: 1.25rem;
+  padding: 1rem 1.1rem;
+}
+
+.checkout-status.is-blocked {
+  background: var(--ss-warm);
+  border-color: rgba(220, 53, 69, 0.15);
+}
+
+.selected-address-card {
+  border: 1px solid rgba(25, 135, 84, 0.14);
+  border-radius: 1.25rem;
+  padding: 1rem;
+}
+
+.address-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  background: var(--ss-mint);
+  color: var(--ss-green);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.saved-address-card {
+  border: 1px solid rgba(25, 135, 84, 0.12);
+  border-radius: 1.25rem;
+  padding: 1rem;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.saved-address-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 1rem 2rem rgba(20, 61, 45, 0.1);
+}
+
+.recent-chip {
+  background: white;
+  border: 1px solid rgba(25, 135, 84, 0.12);
+}
+
+.autocomplete-panel {
+  position: absolute;
+  inset: calc(100% + 0.45rem) 0 auto 0;
+  z-index: 20;
+  border-radius: 1.25rem;
+  box-shadow: var(--ss-shadow);
+  overflow: hidden;
+}
+
+.autocomplete-option {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  padding: 0.9rem 1rem;
+}
+
+.autocomplete-option:hover {
+  background: rgba(25, 135, 84, 0.06);
+}
+
+.map-canvas {
+  height: 280px;
+  width: 100%;
+  border-radius: 1.25rem;
+  overflow: hidden;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.45rem 0;
+}
+
+.summary-total {
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid rgba(20, 61, 45, 0.08);
+}
+
+.payment-toggle {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.payment-option {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  border: 1px solid rgba(20, 61, 45, 0.12);
+  border-radius: 1rem;
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+}
+
+.payment-option.active {
+  border-color: rgba(25, 135, 84, 0.36);
+  background: var(--ss-mint);
+}
+
+.payment-option.disabled {
+  opacity: 0.6;
+}
+
+.sticky-summary {
+  position: sticky;
+  top: 6rem;
+}
+
+@media (max-width: 991.98px) {
+  .sticky-summary {
+    position: static;
+  }
 }

@@ -9,6 +9,7 @@ from app.models import Menu, Order, OrderItem, OrderPaymentMethod, OrderStatus, 
 from app.repositories.menu_repository import MenuRepository
 from app.repositories.order_repository import OrderRepository
 from app.schemas.order import CartOrderItemInput
+from app.services.delivery_service import DeliveryService
 
 
 class OrderService:
@@ -18,6 +19,7 @@ class OrderService:
         self.db = db
         self.orders = OrderRepository(db)
         self.menu = MenuRepository(db)
+        self.delivery = DeliveryService()
 
     def _resolve_cart_items(self, items: list[CartOrderItemInput]) -> tuple[list[tuple[Menu, int]], Decimal]:
         if not items:
@@ -32,12 +34,25 @@ class OrderService:
             total += menu.price * item.quantity
         return resolved, total.quantize(Decimal("0.01"))
 
-    def create_order(self, customer: User, delivery_address: str, payment_method: OrderPaymentMethod, items: list[CartOrderItemInput]) -> Order:
-        resolved_items, total = self._resolve_cart_items(items)
+    def create_order(
+        self,
+        customer: User,
+        delivery_address: str,
+        latitude: float,
+        longitude: float,
+        payment_method: OrderPaymentMethod,
+        items: list[CartOrderItemInput],
+    ) -> Order:
+        availability = self.delivery.check_availability(latitude, longitude)
+        if not availability["available"]:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Service not available at your location.")
+        resolved_items, items_total = self._resolve_cart_items(items)
+        delivery_fee = Decimal(str(availability["delivery_fee"]))
+        total = items_total + delivery_fee
         order = Order(
             customer=customer,
             delivery_address=delivery_address,
-            total_amount=total,
+            total_amount=total.quantize(Decimal("0.01")),
             status=OrderStatus.PENDING,
             order_time=datetime.now(),
             payment_method=payment_method,

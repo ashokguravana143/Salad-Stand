@@ -4,6 +4,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 
 import { AuthService } from '../../../core/services/auth.service';
 import { CartService } from '../../../core/services/cart.service';
+import { LocationService } from '../../../core/services/location.service';
 
 @Component({
   selector: 'app-shell',
@@ -51,6 +52,27 @@ import { CartService } from '../../../core/services/cart.service';
 
     <main class="page-shell py-4">
       <div class="container">
+        <section *ngIf="user()?.role === 'ROLE_CUSTOMER'" class="location-banner card-soft p-3 p-lg-4 mb-4">
+          <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+            <div>
+              <div class="eyebrow">Delivery access</div>
+              <h2 class="h5 mb-1">Location-based ordering check</h2>
+              <p class="mb-1" [class.text-danger]="location.orderingBlocked()" [class.text-success]="!location.orderingBlocked()">
+                {{ locationMessage() }}
+              </p>
+              <small *ngIf="location.availability()" class="text-secondary">
+                Distance {{ location.availability()?.distance_km }} km within a {{ location.availability()?.radius_km }} km service radius.
+              </small>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+              <button class="btn btn-success btn-pill" type="button" (click)="refreshLocation()" [disabled]="location.loading()">
+                {{ location.loading() ? 'Checking...' : 'Use current location' }}
+              </button>
+              <a *ngIf="!location.orderingBlocked()" routerLink="/checkout" class="btn btn-outline-success btn-pill">Checkout</a>
+            </div>
+          </div>
+        </section>
+
         <router-outlet />
       </div>
     </main>
@@ -65,11 +87,25 @@ export class ShellComponent {
   private readonly router = inject(Router);
   private readonly cart = inject(CartService);
 
+  readonly location = inject(LocationService);
   readonly user = this.auth.currentUser;
   readonly cartCount = computed(() => this.cart.count());
+  readonly locationMessage = computed(() => {
+    if (this.location.permission() === 'loading') {
+      return 'Checking your current location for delivery availability...';
+    }
+    if (this.location.permission() === 'denied' || this.location.permission() === 'unsupported') {
+      return 'Location access is required to use this service.';
+    }
+    return this.location.message() || 'Enable location to check whether ordering is available.';
+  });
 
   logout() {
     this.auth.logout();
     this.router.navigateByUrl('/login');
+  }
+
+  refreshLocation() {
+    void this.location.requestCurrentLocation(true);
   }
 }

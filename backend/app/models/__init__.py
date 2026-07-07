@@ -1,3 +1,4 @@
+from app.models.address import Address, AddressLabel
 from app.models.menu import Menu
 from app.models.order import Order, OrderPaymentMethod, OrderStatus
 from app.models.order_item import OrderItem
@@ -6,6 +7,8 @@ from app.models.system_config import SystemConfig
 from app.models.user import User
 
 __all__ = [
+    "Address",
+    "AddressLabel",
     "Menu",
     "Order",
     "OrderItem",

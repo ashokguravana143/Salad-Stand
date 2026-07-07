@@ -18,3 +18,4 @@ class User(Base):
     role = relationship("Role", back_populates="users")
     customer_orders = relationship("Order", back_populates="customer", foreign_keys="Order.customer_id")
     delivery_orders = relationship("Order", back_populates="delivery_boy", foreign_keys="Order.delivery_boy_id")
+    addresses = relationship("Address", back_populates="user", cascade="all, delete-orphan")

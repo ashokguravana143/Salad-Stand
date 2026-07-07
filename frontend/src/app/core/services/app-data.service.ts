@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { ApiClientService } from '../http/api-client.service';
-import { AppSettings, DailyEarning, DeliveryBoy, DeliveryEarningsResponse, MenuItem, Order } from '../models/app.models';
+import { AddressRecord, AppSettings, DailyEarning, DeliveryBoy, DeliveryEarningsResponse, MenuItem, Order, ServiceAvailability } from '../models/app.models';
 
 @Injectable({ providedIn: 'root' })
 export class AppDataService {
@@ -9,6 +9,10 @@ export class AppDataService {
 
   publicSettings() {
     return this.api.get<AppSettings>('/settings/public');
+  }
+
+  checkServiceAvailability(latitude: number, longitude: number) {
+    return this.api.get<ServiceAvailability>(`/delivery/availability?latitude=${latitude}&longitude=${longitude}`);
   }
 
   menu() {
@@ -23,11 +27,27 @@ export class AppDataService {
     return this.api.get<Order[]>('/customer/orders/my');
   }
 
-  placeOrder(payload: { delivery_address: string; payment_method: string; items: { menu_id: number; quantity: number }[] }) {
+  myAddresses() {
+    return this.api.get<AddressRecord[]>('/customer/addresses');
+  }
+
+  createAddress(payload: Omit<AddressRecord, 'id' | 'distance_km' | 'is_serviceable'>) {
+    return this.api.post<AddressRecord>('/customer/addresses', payload);
+  }
+
+  updateAddress(addressId: number, payload: Omit<AddressRecord, 'id' | 'distance_km' | 'is_serviceable'>) {
+    return this.api.put<AddressRecord>(`/customer/addresses/${addressId}`, payload);
+  }
+
+  deleteAddress(addressId: number) {
+    return this.api.delete<void>(`/customer/addresses/${addressId}`);
+  }
+
+  placeOrder(payload: { delivery_address: string; address_id?: number | null; latitude: number; longitude: number; payment_method: string; items: { menu_id: number; quantity: number }[] }) {
     return this.api.post<Order>('/customer/orders', payload);
   }
 
-  createPaymentOrder(payload: { delivery_address: string; items: { menu_id: number; quantity: number }[] }) {
+  createPaymentOrder(payload: { delivery_address: string; address_id?: number | null; latitude: number; longitude: number; items: { menu_id: number; quantity: number }[] }) {
     return this.api.post<Record<string, unknown>>('/customer/payments/create-order', payload);
   }
 

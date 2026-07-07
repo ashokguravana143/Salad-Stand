@@ -34,7 +34,9 @@ class Order(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     customer_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, index=True)
-    delivery_boy_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)
+    delivery_boy_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True
+    )
     delivery_address: Mapped[str] = mapped_column(String(500), nullable=False)
     total_amount: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     status: Mapped[OrderStatus] = mapped_column(Enum(OrderStatus, name="order_status"), nullable=False)

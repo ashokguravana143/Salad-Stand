@@ -5,11 +5,18 @@ from fastapi import APIRouter, Depends
 from app.api.deps import DBSession, require_roles
 from app.api.routes.customer import _serialize_order
 from app.models import RoleName, User
+from app.schemas.delivery import ServiceAvailabilityResponse
 from app.schemas.order import DeliveryEarningResponse, OrderResponse
+from app.services.delivery_service import DeliveryService
 from app.services.order_service import OrderService
 
 
 router = APIRouter()
+
+
+@router.get("/availability", response_model=ServiceAvailabilityResponse)
+def service_availability(latitude: float, longitude: float):
+    return DeliveryService().check_availability(latitude, longitude)
 
 
 @router.get("/dashboard", response_model=list[OrderResponse])

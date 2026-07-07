@@ -1,4 +1,4 @@
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
@@ -8,7 +8,7 @@ import { Order } from '../../core/models/app.models';
 @Component({
   selector: 'app-my-deliveries',
   standalone: true,
-  imports: [CommonModule, RouterLink, DatePipe],
+  imports: [CommonModule, RouterLink],
   template: `
     <h1 class="display-6 fw-bold text-success text-center mb-4">My Deliveries</h1>
     <div *ngIf="!orders().length" class="card card-soft text-center p-5">
